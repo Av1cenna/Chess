@@ -1,5 +1,9 @@
 import pygame
 
+from stockfish import Stockfish
+
+stockfish = Stockfish(path="C:/Users/sino2/Desktop/stockfish/stockfish-windows-x86-64-avx2.exe")
+
 pygame.init()
 WIDTH = 1000
 HEIGHT = 900
@@ -87,7 +91,8 @@ promo_index = 100
 check = False
 castling_moves = []
 
-#Class for checking pieces and valid moves
+
+# Class for checking pieces and valid moves
 class Checker:
     def check_options(pieces, locations, turn):
         global castling_moves
@@ -244,8 +249,7 @@ class Checker:
                 moves_list.append((position[0] + 1, position[1] + 1))
             if (position[0] - 1, position[1] + 1) == white_ep:
                 moves_list.append((position[0] - 1, position[1] + 1))
-            
-            
+
         return moves_list
 
     # check valid knight moves
@@ -275,8 +279,8 @@ class Checker:
         return valid_options
 
     def check_castling():
-    # king must not currently be in check, neither the rook nor king has moved previously, nothing between
-    # and the king does not pass through or finish on an attacked piece
+        # king must not currently be in check, neither the rook nor king has moved previously, nothing between
+        # and the king does not pass through or finish on an attacked piece
         castle_moves = []  # store each valid castle move as [((king_coords), (castle_coords))]
         rook_indexes = []
         rook_locations = []
@@ -295,7 +299,7 @@ class Checker:
                     castle = True
                     if rook_locations[i][0] < king_pos[0]:
                         empty_squares = [(king_pos[0] - 1, king_pos[1]), (king_pos[0] - 2, king_pos[1]),
-                                        (king_pos[0] - 3, king_pos[1])]
+                                         (king_pos[0] - 3, king_pos[1])]
                     else:
                         empty_squares = [(king_pos[0] + 1, king_pos[1]), (king_pos[0] + 2, king_pos[1])]
                     for j in range(len(empty_squares)):
@@ -317,7 +321,7 @@ class Checker:
                     castle = True
                     if rook_locations[i][0] < king_pos[0]:
                         empty_squares = [(king_pos[0] - 1, king_pos[1]), (king_pos[0] - 2, king_pos[1]),
-                                        (king_pos[0] - 3, king_pos[1])]
+                                         (king_pos[0] - 3, king_pos[1])]
                     else:
                         empty_squares = [(king_pos[0] + 1, king_pos[1]), (king_pos[0] + 2, king_pos[1])]
                     for j in range(len(empty_squares)):
@@ -375,14 +379,16 @@ class Checker:
             white_pieces[promo_index] = white_promotions[y_pos]
         elif black_promote and left_click and x_pos > 7 and y_pos < 4:
             black_pieces[promo_index] = black_promotions[y_pos]
-#Class for drawing pieces, moves and actions onto the board
+
+
+# Class for drawing pieces, moves and actions onto the board
 class Drawer:
     def draw_board():
         light_gray = (192, 192, 192)
         dark_gray = (105, 105, 105)
         gray = (128, 128, 128)
         black = (0, 0, 0)
-        
+
         # Draw the main board grid
         for row in range(8):
             for col in range(8):
@@ -391,30 +397,28 @@ class Drawer:
                 else:
                     color = dark_gray
                 pygame.draw.rect(screen, color, (col * 100, row * 100, 100, 100))
-        
+
         # Draw borders
         pygame.draw.rect(screen, gray, (0, 800, WIDTH, 100))
         pygame.draw.rect(screen, black, (0, 800, WIDTH, 100), 5)
         pygame.draw.rect(screen, gray, (800, 0, 200, HEIGHT))
         pygame.draw.rect(screen, black, (800, 0, 200, HEIGHT), 5)
-        
-    
+
         letter_offset = 97
         number_offset = 56
         square_size = 100
-        
+
         for col in range(8):
             text = chr(letter_offset + col)
             text_color = light_gray if col % 2 == 0 else dark_gray
             text_surface = font.render(text, True, text_color)
-            screen.blit(text_surface, (col * square_size + 76, HEIGHT -125))
-        
+            screen.blit(text_surface, (col * square_size + 76, HEIGHT - 125))
+
         for row in range(8):
             text = str(8 - row)
             text_color = dark_gray if row % 2 == 0 else light_gray
             text_surface = font.render(text, True, text_color)
             screen.blit(text_surface, (10, row * square_size + 10))
-
 
         status_text = ['White: Select a Piece to Move!', 'White: Select a Square!',
                        'Black: Select a Piece to Move!', 'Black: Select a Square!']
@@ -435,23 +439,23 @@ class Drawer:
                 screen.blit(white_pawn, (white_locations[i][0] * 100 + 18, white_locations[i][1] * 100 + 30))
             else:
                 screen.blit(white_images[index], (white_locations[i][0] * 100 + 10, white_locations[i][1] * 100 + 10))
-            #hightlighting which white piece is selected
+            # hightlighting which white piece is selected
             if turn_step < 2:
                 if selection == i:
                     pygame.draw.rect(screen, 'white', [white_locations[i][0] * 100 + 1, white_locations[i][1] * 100 + 1,
-                                                 100, 100], 2)
-        
+                                                       100, 100], 2)
+
         for i in range(len(black_pieces)):
             index = piece_list.index(black_pieces[i])
             if black_pieces[i] == 'pawn':
                 screen.blit(black_pawn, (black_locations[i][0] * 100 + 18, black_locations[i][1] * 100 + 30))
             else:
                 screen.blit(black_images[index], (black_locations[i][0] * 100 + 10, black_locations[i][1] * 100 + 10))
-            #hightlighting which black piece is selected
+            # hightlighting which black piece is selected
             if turn_step >= 2:
                 if selection == i:
                     pygame.draw.rect(screen, 'black', [black_locations[i][0] * 100 + 1, black_locations[i][1] * 100 + 1,
-                                                  100, 100], 2)
+                                                       100, 100], 2)
 
     def draw_promotion():
         pygame.draw.rect(screen, 'dark gray', [800, 0, 200, 420])
@@ -482,7 +486,8 @@ class Drawer:
                         check = True
                         if counter < 15:
                             pygame.draw.rect(screen, 'dark red', [white_locations[king_index][0] * 100 + 1,
-                                                              white_locations[king_index][1] * 100 + 1, 100, 100], 5)
+                                                                  white_locations[king_index][1] * 100 + 1, 100, 100],
+                                             5)
         else:
             if 'king' in black_pieces:
                 king_index = black_pieces.index('king')
@@ -492,13 +497,14 @@ class Drawer:
                         check = True
                         if counter < 15:
                             pygame.draw.rect(screen, 'dark red', [black_locations[king_index][0] * 100 + 1,
-                                                               black_locations[king_index][1] * 100 + 1, 100, 100], 5)
+                                                                  black_locations[king_index][1] * 100 + 1, 100, 100],
+                                             5)
 
     def draw_game_over():
         pygame.draw.rect(screen, 'black', [200, 200, 400, 70])
         screen.blit(font.render(f'{winner} won the game!', True, 'white'), (210, 210))
         screen.blit(font.render(f'Press ENTER to Restart!', True, 'white'), (210, 240))
-    
+
     def draw_castling(moves):
         if turn_step < 2:
             color = 'white'
@@ -509,9 +515,9 @@ class Drawer:
             screen.blit(font.render('king', True, 'black'), (moves[i][0][0] * 100 + 30, moves[i][0][1] * 100 + 70))
             pygame.draw.circle(screen, color, (moves[i][1][0] * 100 + 50, moves[i][1][1] * 100 + 70), 8)
             screen.blit(font.render('rook', True, 'black'),
-                    (moves[i][1][0] * 100 + 30, moves[i][1][1] * 100 + 70))
+                        (moves[i][1][0] * 100 + 30, moves[i][1][1] * 100 + 70))
             pygame.draw.line(screen, color, (moves[i][0][0] * 100 + 50, moves[i][0][1] * 100 + 70),
-                         (moves[i][1][0] * 100 + 50, moves[i][1][1] * 100 + 70), 2)
+                             (moves[i][1][0] * 100 + 50, moves[i][1][1] * 100 + 70), 2)
 
     def draw_valid(moves):
         if turn_step < 2:
@@ -531,9 +537,38 @@ class Drawer:
             index = piece_list.index(captured_piece)
             screen.blit(small_white_images[index], (925, 5 + 50 * i))
 
+
 black_options = Checker.check_options(black_pieces, black_locations, 'black')
 white_options = Checker.check_options(white_pieces, white_locations, 'white')
-#MAIN GAME LOOP
+
+
+move_log = []
+best_move = None
+
+def log_move(start_pos, end_pos):
+    """
+    Converts board coordinates to chess notation and logs the move, including castling in UCI format.
+    """
+    columns = "abcdefgh"
+    # Convert start and end positions
+
+    start_col = columns[start_pos[0]]
+    start_row = 8 - start_pos[1]
+    end_col = columns[end_pos[0]]
+    end_row = 8 - end_pos[1]
+    if turn_step < 2 and selected_piece == 'pawn' and start_row == 7 and end_row == 8:
+        move = f"{start_col}{start_row}{end_col}{end_row}q"
+    elif turn_step > 1 and selected_piece == 'pawn' and start_row == 2 and end_row == 1:
+        move = f"{start_col}{start_row}{end_col}{end_row}q"
+    else:
+        move = f"{start_col}{start_row}{end_col}{end_row}"
+
+    # Append to the move log
+    move_log.append(move)
+    print("Logged move:", move)
+
+
+# MAIN GAME LOOP
 run = True
 while run:
     timer.tick(fps)
@@ -575,6 +610,9 @@ while run:
                         turn_step = 1
                 if click_coords in valid_moves and selection != 100:
                     white_ep = Checker.check_ep(white_locations[selection], click_coords)
+                    log_move(white_locations[selection], click_coords)
+                    stockfish.set_position(move_log)
+                    best_move = stockfish.get_best_move()
                     white_locations[selection] = click_coords
                     white_moved[selection] = True
                     if click_coords in black_locations:
@@ -601,6 +639,9 @@ while run:
                 elif selection != 100 and selected_piece == 'king':
                     for q in range(len(castling_moves)):
                         if click_coords == castling_moves[q][0]:
+                            log_move(white_locations[selection], click_coords)
+                            stockfish.set_position(move_log)
+                            best_move = stockfish.get_best_move()
                             white_locations[selection] = click_coords
                             white_moved[selection] = True
                             if click_coords == (2, 7):
@@ -624,6 +665,9 @@ while run:
                         turn_step = 3
                 if click_coords in valid_moves and selection != 100:
                     black_ep = Checker.check_ep(black_locations[selection], click_coords)
+                    log_move(black_locations[selection], click_coords)
+                    stockfish.set_position(move_log)
+                    best_move = stockfish.get_best_move()
                     black_locations[selection] = click_coords
                     black_moved[selection] = True
                     if click_coords in white_locations:
@@ -683,9 +727,19 @@ while run:
                 turn_step = 0
                 selection = 100
                 valid_moves = []
+                move_log = []
                 black_options = Checker.check_options(black_pieces, black_locations, 'black')
                 white_options = Checker.check_options(white_pieces, white_locations, 'white')
 
+    if best_move:
+        if turn_step < 2:
+            screen.blit(medium_font.render(f'Stockfish: ', True, 'white'), (805, 530))
+            screen.blit(medium_font.render(f'{best_move}', True, 'white'), (810, 580))
+        else:
+            screen.blit(medium_font.render(f'Stockfish: ', True, 'black'), (805, 530))
+            screen.blit(medium_font.render(f'{best_move}', True, 'black'), (810, 580))
+    else:
+        screen.blit(medium_font.render(f'Stockfish:', True, 'white'), (805, 530))
     if winner != '':
         game_over = True
         Drawer.draw_game_over()
