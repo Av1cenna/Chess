@@ -2,7 +2,18 @@ import pygame
 
 from stockfish import Stockfish
 
-stockfish = Stockfish(path="C:/Users/sino2/Desktop/stockfish/stockfish-windows-x86-64-avx2.exe")
+
+class StockfishSingleton:
+    _instance = None
+
+    @staticmethod
+    def get_instance(path="C:/Users/sino2/Desktop/stockfish/stockfish-windows-x86-64-avx2.exe"):
+        if StockfishSingleton._instance is None:
+            StockfishSingleton._instance = Stockfish(path)
+        return StockfishSingleton._instance
+
+
+stockfish = StockfishSingleton.get_instance()
 
 pygame.init()
 WIDTH = 1000
@@ -598,7 +609,7 @@ def log_move(start_pos, end_pos):
         move = f"{start_col}{start_row}{end_col}{end_row}"
 
     logger.log_move(move)
-    
+
     # Append to the move log
     move_log.append(move)
     print("Logged move:", move)
