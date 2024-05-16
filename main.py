@@ -450,7 +450,7 @@ class Drawer:
                 screen.blit(white_pawn, (white_locations[i][0] * 100 + 18, white_locations[i][1] * 100 + 30))
             else:
                 screen.blit(white_images[index], (white_locations[i][0] * 100 + 10, white_locations[i][1] * 100 + 10))
-            # hightlighting which white piece is selected
+            # highlighting which white piece is selected
             if turn_step < 2:
                 if selection == i:
                     pygame.draw.rect(screen, 'white', [white_locations[i][0] * 100 + 1, white_locations[i][1] * 100 + 1,
@@ -462,7 +462,7 @@ class Drawer:
                 screen.blit(black_pawn, (black_locations[i][0] * 100 + 18, black_locations[i][1] * 100 + 30))
             else:
                 screen.blit(black_images[index], (black_locations[i][0] * 100 + 10, black_locations[i][1] * 100 + 10))
-            # hightlighting which black piece is selected
+            # highlighting which black piece is selected
             if turn_step >= 2:
                 if selection == i:
                     pygame.draw.rect(screen, 'black', [black_locations[i][0] * 100 + 1, black_locations[i][1] * 100 + 1,
@@ -585,14 +585,13 @@ class ConsoleLogger(Logger):
         print("Console log reset")
 
 
-# Initialization of the logger at the start of your program
+# Initialization of the logger at the start of the program
 logger = TextFileLogger("chess_moves.txt")
 logger.reset_log()  # Clear any previous game logs
 
 def move_logger_decorator(log_func):
     def wrapper(*args, **kwargs):
         move = log_func(*args, **kwargs)
-        # Notify all observers (loggers) about the move
         return move
     return wrapper
 
