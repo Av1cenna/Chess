@@ -541,9 +541,43 @@ class Drawer:
 black_options = Checker.check_options(black_pieces, black_locations, 'black')
 white_options = Checker.check_options(white_pieces, white_locations, 'white')
 
-
 move_log = []
 best_move = None
+
+
+class Logger:
+    def log_move(self, move):
+        raise NotImplementedError("Subclasses must implement this method.")
+
+    def reset_log(self):
+        raise NotImplementedError("Subclasses must implement this method.")
+
+
+class TextFileLogger(Logger):
+    def __init__(self, file_path):
+        self.file_path = file_path
+
+    def log_move(self, move):
+        with open(self.file_path, 'a') as file:
+            file.write(move + "\n")
+
+    def reset_log(self):
+        with open(self.file_path, 'w') as file:
+            file.write("")  # Clear existing content
+
+
+class ConsoleLogger(Logger):
+    def log_move(self, move):
+        print("Move logged to console:", move)
+
+    def reset_log(self):
+        print("Console log reset")
+
+
+# Initialization of the logger at the start of your program
+logger = TextFileLogger("chess_moves.txt")
+logger.reset_log()  # Clear any previous game logs
+
 
 def log_move(start_pos, end_pos):
     """
@@ -563,6 +597,8 @@ def log_move(start_pos, end_pos):
     else:
         move = f"{start_col}{start_row}{end_col}{end_row}"
 
+    logger.log_move(move)
+    
     # Append to the move log
     move_log.append(move)
     print("Logged move:", move)
