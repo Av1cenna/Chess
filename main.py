@@ -589,7 +589,14 @@ class ConsoleLogger(Logger):
 logger = TextFileLogger("chess_moves.txt")
 logger.reset_log()  # Clear any previous game logs
 
+def move_logger_decorator(log_func):
+    def wrapper(*args, **kwargs):
+        move = log_func(*args, **kwargs)
+        # Notify all observers (loggers) about the move
+        return move
+    return wrapper
 
+@move_logger_decorator
 def log_move(start_pos, end_pos):
     """
     Converts board coordinates to chess notation and logs the move, including castling in UCI format.
@@ -775,6 +782,7 @@ while run:
                 selection = 100
                 valid_moves = []
                 move_log = []
+                logger.reset_log()
                 black_options = Checker.check_options(black_pieces, black_locations, 'black')
                 white_options = Checker.check_options(white_pieces, white_locations, 'white')
 
